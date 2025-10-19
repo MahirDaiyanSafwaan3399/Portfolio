@@ -12,7 +12,7 @@
         :root {
             --neon-cyan: #00FFFF;
             --neon-yellow: #FFFF00;
-            --neon-magenta: #FF00FF;
+            --neon-magenta: #FF00FF; /* Keeping it defined but using it minimally */
             --dark-bg: #0A0A0A;
             --mid-dark: #1A1A1A;
             --grid-bg: radial-gradient(circle, var(--mid-dark) 1px, transparent 1px);
@@ -28,6 +28,7 @@
             background-image: var(--grid-bg);
             background-size: var(--grid-size) var(--grid-size);
             animation: flicker 15s infinite alternate; /* Very subtle background flicker */
+            cursor: none; /* Hide default cursor */
         }
 
         /* Utility classes for neon glow and borders */
@@ -47,22 +48,32 @@
             box-shadow: 0 0 8px var(--neon-yellow);
         }
 
-        .bg-neon-magenta {
-            background-color: var(--neon-magenta);
+        /* Adjusted link color to cyan/yellow palette */
+        .bg-action-btn {
+            background-color: var(--neon-cyan);
             color: var(--dark-bg);
-            box-shadow: 0 0 8px var(--neon-magenta);
+            box-shadow: 0 0 10px var(--neon-cyan);
         }
-
+        .bg-action-btn:hover {
+            background-color: var(--neon-yellow);
+            box-shadow: 0 0 10px var(--neon-yellow);
+        }
+        
+        /* New 3D hover effect for section boxes */
         .section-box {
             border: 1px solid var(--mid-dark);
             padding: 1.5rem;
-            transition: all 0.3s ease;
+            transition: all 0.5s ease;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+            background-color: var(--mid-dark); /* Ensure dark background for sections */
+            border-radius: 0.5rem; /* Tailwind 'rounded-xl' equivalent */
         }
 
         .section-box:hover {
             border-color: var(--neon-cyan);
-            box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
-            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.6), inset 0 0 10px rgba(0, 255, 255, 0.2);
+            transform: translateZ(10px) translateY(-5px); /* Lift and push forward */
         }
 
         .link-glow:hover {
@@ -95,6 +106,34 @@
             animation: glitch 1.5s infinite linear alternate;
         }
 
+        /* Custom cursor styling */
+        .cursor-dot {
+            width: 10px;
+            height: 10px;
+            background-color: var(--neon-cyan);
+            border-radius: 50%;
+            position: fixed;
+            z-index: 9999;
+            pointer-events: none;
+            transition: transform 0.1s ease-out;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 5px var(--neon-cyan), 0 0 15px var(--neon-cyan);
+            mix-blend-mode: screen; /* Makes it look like light */
+        }
+        
+        .cursor-outline {
+            width: 40px;
+            height: 40px;
+            border: 2px solid var(--neon-yellow);
+            border-radius: 50%;
+            position: fixed;
+            z-index: 9998;
+            pointer-events: none;
+            transition: transform 0.3s ease-out, opacity 0.3s;
+            transform: translate(-50%, -50%);
+            mix-blend-mode: exclusion;
+        }
+
         /* Custom scrollbar for better theme integration */
         ::-webkit-scrollbar {
             width: 8px;
@@ -103,25 +142,102 @@
             background: var(--dark-bg);
         }
         ::-webkit-scrollbar-thumb {
-            background: var(--neon-magenta);
+            background: var(--neon-cyan); /* Changed scrollbar color to Cyan */
             border-radius: 4px;
+        }
+        
+        /* --- Hamburger Menu Styles --- */
+        .hamburger {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            z-index: 60; /* Above nav links */
+        }
+
+        .line {
+            width: 100%;
+            height: 3px;
+            background-color: var(--neon-cyan);
+            transition: all 0.3s linear;
+            transform-origin: 1px;
+            box-shadow: 0 0 5px var(--neon-cyan);
+        }
+
+        .hamburger.open .line:nth-child(1) {
+            transform: rotate(45deg) translate(2px, 2px);
+        }
+
+        .hamburger.open .line:nth-child(2) {
+            opacity: 0;
+            transform: translateX(-10px);
+        }
+
+        .hamburger.open .line:nth-child(3) {
+            transform: rotate(-45deg) translate(2px, -2px);
+        }
+        
+        /* Mobile Menu Container */
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100vh;
+            background-color: rgba(10, 10, 10, 0.98); /* Very dark, slightly transparent background */
+            z-index: 55;
+            transform: translateX(100%);
+            transition: transform 0.5s ease-in-out;
+            padding-top: 6rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .mobile-menu.open {
+            transform: translateX(0);
         }
     </style>
 </head>
 <body class="min-h-screen">
 
+    <!-- Custom Cursor Elements -->
+    <div id="cursor-dot" class="cursor-dot"></div>
+    <div id="cursor-outline" class="cursor-outline"></div>
+
     <!-- Header / Navigation -->
     <header class="sticky top-0 z-50 p-4 border-b border-gray-900 shadow-lg" style="background-color: rgba(10, 10, 10, 0.95);">
         <nav class="max-w-7xl mx-auto flex justify-between items-center">
+            <!-- 1. Changed "M.D.S." to "MAHIR" -->
             <div class="text-xl font-bold neon-text-cyan hover:link-glow transition">MAHIR</div>
-            <div class="space-x-4 flex items-center text-sm sm:text-base">
+            
+            <!-- Desktop Navigation Links (Hidden on small screens) -->
+            <div id="desktop-nav" class="hidden sm:flex space-x-4 items-center text-sm sm:text-base">
                 <a href="#about" class="link-glow text-gray-400 hover:text-white">ABOUT</a>
                 <a href="#skills" class="link-glow text-gray-400 hover:text-white">SKILLS</a>
                 <a href="#experience" class="link-glow text-gray-400 hover:text-white">EXPERIENCE</a>
                 <a href="#projects" class="link-glow text-gray-400 hover:text-white">PROJECTS</a>
             </div>
+            
+            <!-- Hamburger Button (Visible on small screens) -->
+            <div id="hamburger-btn" class="sm:hidden hamburger">
+                <div class="line"></div>
+                <div class="line"></div>
+                <div class="line"></div>
+            </div>
         </nav>
     </header>
+    
+    <!-- Mobile Menu Container -->
+    <div id="mobile-menu" class="mobile-menu sm:hidden">
+        <a href="#about" class="neon-text-cyan text-3xl mb-8 link-glow hover:text-neon-yellow" onclick="closeMenu()">ABOUT</a>
+        <a href="#skills" class="neon-text-cyan text-3xl mb-8 link-glow hover:text-neon-yellow" onclick="closeMenu()">SKILLS</a>
+        <a href="#experience" class="neon-text-cyan text-3xl mb-8 link-glow hover:text-neon-yellow" onclick="closeMenu()">EXPERIENCE</a>
+        <a href="#projects" class="neon-text-cyan text-3xl mb-8 link-glow hover:text-neon-yellow" onclick="closeMenu()">PROJECTS</a>
+        <a href="mailto:+8801880830398" class="text-neon-yellow text-xl mt-8 underline link-glow" onclick="closeMenu()">CONTACT ME</a>
+    </div>
 
     <main class="max-w-7xl mx-auto px-4 py-8">
 
@@ -140,14 +256,14 @@
                     With over <b>1.5+ years of experience</b> in cross-platform app development (Android/iOS), I thrive on bridging software and hardware systems.
                 </p>
                 <p>
-                    My passion extends into <b>Aerospace and Rocketry</b> where I specialize in Avionics Guidance Navigation Control (A&GNC), embedded systems, and model rocketry research.
+                    My passion extends into <b>Aerospace and Rocketry</b>, where I specialize in Avionics Guidance Navigation Control (A&GNC), embedded systems, and model rocketry research.
                 </p>
             </div>
             <div class="mt-8 flex flex-wrap gap-4 text-sm sm:text-base">
-                <a href="mailto:msafwaan30@gmail.com" class="px-5 py-2 rounded-lg bg-neon-magenta text-white font-bold transition hover:opacity-80">
+                <a href="mailto:+8801880830398" class="px-5 py-2 rounded-lg bg-action-btn text-dark-bg font-bold transition hover:opacity-80">
                     <span class="glitch-text">CONTACT &gt;</span>
                 </a>
-                <a href="https://www.linkedin.com/in/safwaan30/" target="_blank" class="px-5 py-2 rounded-lg border-2 border-neon-cyan text-neon-cyan font-bold transition hover:bg-neon-cyan hover:text-dark-bg">
+                <a href="https://linkedin.com/in/your_profile" target="_blank" class="px-5 py-2 rounded-lg border-2 border-neon-cyan text-neon-cyan font-bold transition hover:bg-neon-cyan hover:text-dark-bg">
                     LINKEDIN
                 </a>
             </div>
@@ -157,38 +273,39 @@
         <section id="skills" class="my-12">
             <h3 class="text-3xl font-bold mb-8 neon-text-cyan border-b-2 border-neon-yellow pb-2">01. { SKILLS_MATRIX }</h3>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Grid is responsive: 1 col on mobile, 2 on medium, 3 on large -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <!-- Languages -->
                 <div class="section-box rounded-xl">
                     <h4 class="text-xl font-bold mb-3 text-neon-yellow">LANGUAGES [DECODE]</h4>
                     <ul class="space-y-2 text-gray-300 list-disc list-inside ml-2">
-                        <li>JavaScript</li>
+                        <li>JavaScript (Primary)</li>
                         <li>C, C++ (Embedded & Systems)</li>
                         <li>Python (Scripting & Data)</li>
                     </ul>
                 </div>
 
-                <!-- Core Tech -->
+                <!-- Core Tech (Changed color references from magenta to cyan/yellow palette) -->
                 <div class="section-box rounded-xl">
-                    <h4 class="text-xl font-bold mb-3 text-neon-magenta">CORE TECHNOLOGIES [BUILD]</h4>
+                    <h4 class="text-xl font-bold mb-3 text-neon-cyan">CORE TECHNOLOGIES [BUILD]</h4>
                     <div class="flex flex-wrap gap-2 text-xs sm:text-sm">
-                        <span class="px-3 py-1 bg-neon-magenta rounded-full">React</span>
-                        <span class="px-3 py-1 bg-neon-magenta rounded-full">React Native</span>
-                        <span class="px-3 py-1 bg-neon-magenta rounded-full">Firebase / Node.js</span>
-                        <span class="px-3 py-1 bg-neon-magenta rounded-full">NextJS</span>
-                        <span class="px-3 py-1 bg-neon-magenta rounded-full">Embedded Systems (STM32/Arduino)</span>
+                        <span class="px-3 py-1 bg-neon-cyan text-dark-bg rounded-full">React</span>
+                        <span class="px-3 py-1 bg-neon-cyan text-dark-bg rounded-full">React Native</span>
+                        <span class="px-3 py-1 bg-neon-cyan text-dark-bg rounded-full">Firebase / Node.js</span>
+                        <span class="px-3 py-1 bg-neon-cyan text-dark-bg rounded-full">NextJS</span>
+                        <span class="px-3 py-1 bg-neon-cyan text-dark-bg rounded-full">Embedded Systems (STM32/Arduino)</span>
                     </div>
                 </div>
 
-                <!-- Tools & Libraries -->
+                <!-- Tools & Libraries (Changed color references from magenta to cyan/yellow palette) -->
                 <div class="section-box rounded-xl">
-                    <h4 class="text-xl font-bold mb-3 text-neon-cyan">TOOLS & LIBRARIES [ANALYZE]</h4>
+                    <h4 class="text-xl font-bold mb-3 text-neon-yellow">TOOLS & LIBRARIES [ANALYZE]</h4>
                     <div class="flex flex-wrap gap-2 text-xs sm:text-sm">
-                        <span class="px-3 py-1 bg-neon-cyan text-dark-bg rounded-full">OPENMCT</span>
-                        <span class="px-3 py-1 bg-neon-cyan text-dark-bg rounded-full">KiCad / Altium</span>
-                        <span class="px-3 py-1 bg-neon-cyan text-dark-bg rounded-full">Numpy/SciPy/Matplotlib</span>
-                        <span class="px-3 py-1 bg-neon-cyan text-dark-bg rounded-full">D3.JS / Chart JS</span>
-                        <span class="px-3 py-1 bg-neon-cyan text-dark-bg rounded-full">Reverse Engineering</span>
+                        <span class="px-3 py-1 bg-neon-yellow text-dark-bg rounded-full">OPENMCT</span>
+                        <span class="px-3 py-1 bg-neon-yellow text-dark-bg rounded-full">KiCad / Altium</span>
+                        <span class="px-3 py-1 bg-neon-yellow text-dark-bg rounded-full">Numpy/SciPy/Matplotlib</span>
+                        <span class="px-3 py-1 bg-neon-yellow text-dark-bg rounded-full">D3.JS / Chart JS</span>
+                        <span class="px-3 py-1 bg-neon-yellow text-dark-bg rounded-full">Reverse Engineering</span>
                     </div>
                 </div>
             </div>
@@ -209,18 +326,18 @@
                     <ul class="space-y-2 text-gray-300 list-disc list-inside ml-4">
                         <li>Developed a <b>Ground Controlled System (GCS)</b> for real-time data transmission and servo control based on Cartesian coordinates and Euler's angle.</li>
                         <li>Maintained NASA's <b>OPEN MCT</b> for mission-critical telemetry data visualization.</li>
-                        <li>Implemented flight control software using <b>Arduino<b> and <b>MQTT</b> protocol for real-time data ingestion.</li>
+                        <li>Implemented flight control software using <b>Arduino</b> and <b>MQTT</b> protocol for real-time data ingestion.</li>
                         <li>Gained expertise in <b>nozzle theory</b>, solid/liquid propellants, and electric propulsion.</li>
                     </ul>
                 </div>
 
                 <!-- Dhumketu -->
-                <div class="section-box rounded-xl border-l-4 border-neon-magenta">
+                <div class="section-box rounded-xl border-l-4 border-neon-yellow"> <!-- Changed border color -->
                     <div class="flex justify-between flex-col sm:flex-row">
-                        <h4 class="text-xl font-bold text-neon-magenta">Dhumketu Exploration Company Limited</h4>
+                        <h4 class="text-xl font-bold text-neon-yellow">Dhumketu Exploration Company Limited</h4> <!-- Changed text color -->
                         <span class="text-sm text-gray-500 italic">Apr 2024 - Oct 2024</span>
                     </div>
-                    <p class="text-neon-yellow font-semibold mb-3">Embedded Systems and Avionics System Intern</p>
+                    <p class="text-neon-cyan font-semibold mb-3">Embedded Systems and Avionics System Intern</p>
                     <ul class="space-y-2 text-gray-300 list-disc list-inside ml-4">
                         <li>Designed a custom <b>2-layer STM32 board</b> using <b>Altium Designer</b>.</li>
                         <li>Applied control theory algorithms (<b>PID, Kalman Filter, Particle Filter</b>) to accurately process sensor values.</li>
@@ -228,12 +345,12 @@
                 </div>
 
                 <!-- CIOL -->
-                <div class="section-box rounded-xl border-l-4 border-neon-yellow">
+                <div class="section-box rounded-xl border-l-4 border-neon-cyan">
                     <div class="flex justify-between flex-col sm:flex-row">
-                        <h4 class="text-xl font-bold text-neon-yellow">Computational Intelligence and Operations Laboratory (CIOL)</h4>
+                        <h4 class="text-xl font-bold text-neon-cyan">Computational Intelligence and Operations Laboratory (CIOL)</h4>
                         <span class="text-sm text-gray-500 italic">Oct 2024 - Jan 2025</span>
                     </div>
-                    <p class="text-neon-cyan font-semibold mb-3">Research Student</p>
+                    <p class="text-neon-yellow font-semibold mb-3">Research Student</p>
                     <ul class="space-y-2 text-gray-300 list-disc list-inside ml-4">
                         <li>Conducted a literature review on the impact of <b>Large Language Models (LLMs)</b> on human creativity.</li>
                         <li>Engaged in learning <b>AI and ML</b> fundamentals, focusing on <b>Python</b> and <b>Data Preprocessing</b>.</li>
@@ -262,41 +379,67 @@
                 </div>
 
                 <!-- Project 2: Alibi -->
-                <div class="section-box rounded-xl border-t-4 border-neon-magenta hover:border-neon-cyan">
-                    <h4 class="text-xl font-bold mb-2 text-neon-magenta">Alibi</h4>
+                <div class="section-box rounded-xl border-t-4 border-neon-yellow hover:border-neon-cyan"> <!-- Changed border color -->
+                    <h4 class="text-xl font-bold mb-2 text-neon-yellow">Alibi</h4> <!-- Changed text color -->
                     <p class="text-sm text-gray-500 mb-3">Web Application</p>
                     <p class="text-gray-400">
                         A fully functional web platform for university students to keep track of classes, featuring custom <b>routine, teacher, and course management</b> using a full-stack architecture.
                     </p>
                     <div class="mt-4 text-xs font-semibold">
-                        <span class="px-2 py-1 bg-neon-magenta rounded-full mr-1">React</span>
-                        <span class="px-2 py-1 bg-neon-magenta rounded-full">Firebase</span>
+                        <span class="px-2 py-1 bg-neon-yellow text-dark-bg rounded-full mr-1">React</span>
+                        <span class="px-2 py-1 bg-neon-yellow text-dark-bg rounded-full">Firebase</span>
                     </div>
                 </div>
 
                 <!-- Project 3: Bare Metal Pomodoro -->
-                <div class="section-box rounded-xl border-t-4 border-neon-yellow hover:border-neon-magenta">
-                    <h4 class="text-xl font-bold mb-2 text-neon-yellow">Bare Metal Pomodoro Timer</h4>
+                <div class="section-box rounded-xl border-t-4 border-neon-cyan hover:border-neon-yellow">
+                    <h4 class="text-xl font-bold mb-2 text-neon-cyan">Bare Metal Pomodoro Timer</h4>
                     <p class="text-sm text-gray-500 mb-3">Embedded Systems</p>
                     <p class="text-gray-400">
-                        Development of a fully functional Pomodoro timer using the <b>Atmega328P<b> microcontroller, coded entirely at the bare metal level for maximum efficiency.
+                        Development of a fully functional Pomodoro timer using the <b>Atmega328P</b> microcontroller, coded entirely at the bare metal level for maximum efficiency.
                     </p>
                     <div class="mt-4 text-xs font-semibold">
-                        <span class="px-2 py-1 bg-neon-yellow text-dark-bg rounded-full mr-1">Atmega328P</span>
-                        <span class="px-2 py-1 bg-neon-yellow text-dark-bg rounded-full">C/C++</span>
+                        <span class="px-2 py-1 bg-neon-cyan text-dark-bg rounded-full mr-1">Atmega328P</span>
+                        <span class="px-2 py-1 bg-neon-cyan text-dark-bg rounded-full">C/C++</span>
                     </div>
                 </div>
 
                 <!-- Project 4: SHUNBO Discord Bot -->
-                <div class="section-box rounded-xl border-t-4 border-gray-500 hover:border-neon-cyan">
-                    <h4 class="text-xl font-bold mb-2 text-gray-300">SHUNBO (Discord Bot)</h4>
+                <div class="section-box rounded-xl border-t-4 border-neon-yellow hover:border-neon-cyan">
+                    <h4 class="text-xl font-bold mb-2 text-neon-yellow">SHUNBO (Discord Bot)</h4>
                     <p class="text-sm text-gray-500 mb-3">Automation/Backend</p>
                     <p class="text-gray-400">
-                        A Discord bot coded with <b>JavaScript<b> and running on a local server, designed to download audio from YouTube and deliver the MP3 format directly to the user's DM.
+                        A Discord bot coded with <b>JavaScript</b> and running on a local server, designed to download audio from YouTube and deliver the MP3 format directly to the user's DM.
                     </p>
                     <div class="mt-4 text-xs font-semibold">
-                        <span class="px-2 py-1 bg-gray-500 text-white rounded-full mr-1">DiscordJS</span>
-                        <span class="px-2 py-1 bg-gray-500 text-white rounded-full">Node.js</span>
+                        <span class="px-2 py-1 bg-neon-yellow text-dark-bg rounded-full mr-1">DiscordJS</span>
+                        <span class="px-2 py-1 bg-neon-yellow text-dark-bg rounded-full">Node.js</span>
+                    </div>
+                </div>
+                
+                <!-- Project 5: Monthly Payment Manager -->
+                <div class="section-box rounded-xl border-t-4 border-neon-cyan hover:border-neon-yellow">
+                    <h4 class="text-xl font-bold mb-2 text-neon-cyan">Monthly Payment Manager</h4>
+                    <p class="text-sm text-gray-500 mb-3">Automation</p>
+                    <p class="text-gray-400">
+                        A **Python Selenium Automation** tool used for automating every month's payment by interacting with the bKash payment gateway.
+                    </p>
+                    <div class="mt-4 text-xs font-semibold">
+                        <span class="px-2 py-1 bg-neon-cyan text-dark-bg rounded-full mr-1">Python</span>
+                        <span class="px-2 py-1 bg-neon-cyan text-dark-bg rounded-full">Selenium</span>
+                    </div>
+                </div>
+                
+                <!-- Project 6: Section Distribution System -->
+                <div class="section-box rounded-xl border-t-4 border-neon-yellow hover:border-neon-cyan">
+                    <h4 class="text-xl font-bold mb-2 text-neon-yellow">Section Distribution System</h4>
+                    <p class="text-sm text-gray-500 mb-3">Data Processing/Automation</p>
+                    <p class="text-gray-400">
+                        Automated section distribution by reading data from a <b>PDF</b>, processing the information, and creating individual **Excel sheets** by applying specific filters.
+                    </p>
+                    <div class="mt-4 text-xs font-semibold">
+                        <span class="px-2 py-1 bg-neon-yellow text-dark-bg rounded-full mr-1">Python</span>
+                        <span class="px-2 py-1 bg-neon-yellow text-dark-bg rounded-full">Data Processing</span>
                     </div>
                 </div>
 
@@ -306,13 +449,39 @@
 
     <!-- Footer -->
     <footer class="mt-12 p-6 text-center border-t border-gray-900 text-sm text-gray-500">
-        <p>RECODE THE WORLD // &copy; 2025 MAHIR DAIYAN SAFWAAN // SYSTEM V.1.0</p>
+        <p>RECODE THE WORLD // &copy; 2025 MAHIR DAIYAN SAFWAAN // SYSTEM V.1.2</p>
     </footer>
 
-    <!-- JavaScript for the Glitching Typing Effect -->
+    <!-- JavaScript for Effects and Cursor -->
     <script>
+        // Hamburger Menu Logic
+        const hamburgerBtn = document.getElementById('hamburger-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        function toggleMenu() {
+            hamburgerBtn.classList.toggle('open');
+            mobileMenu.classList.toggle('open');
+            // Prevent scrolling when mobile menu is open
+            document.body.style.overflow = mobileMenu.classList.contains('open') ? 'hidden' : 'auto';
+        }
+
+        function closeMenu() {
+            hamburgerBtn.classList.remove('open');
+            mobileMenu.classList.remove('open');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Attach event listener to the hamburger button
+        hamburgerBtn.addEventListener('click', toggleMenu);
+        
+        // --- Custom Cursor and Typing Effects ---
         document.addEventListener('DOMContentLoaded', () => {
             const typingTextElement = document.getElementById('typing-text');
+            const cursorDot = document.getElementById('cursor-dot');
+            const cursorOutline = document.getElementById('cursor-outline');
+            const interactiveElements = 'a, button, .section-box, input, textarea';
+
+            // --- 1. Typing Effect (same as before) ---
             const phrases = [
                 "Avionics & GNC Engineer",
                 "Cross-Platform Developer",
@@ -328,31 +497,26 @@
                 const currentPhrase = phrases[phraseIndex];
 
                 if (isDeleting) {
-                    // Deleting phase (fast)
                     typingTextElement.textContent = currentPhrase.substring(0, charIndex - 1);
                     charIndex--;
                     typingSpeed = 50;
                 } else {
-                    // Typing phase (slow)
                     if (charIndex < currentPhrase.length) {
                         typingTextElement.textContent = currentPhrase.substring(0, charIndex + 1);
                         charIndex++;
-                        typingSpeed = 100 + Math.random() * 50; // Randomize typing speed for organic feel
+                        typingSpeed = 100 + Math.random() * 50;
                     } else {
-                        // Pause at the end of the phrase
                         isDeleting = true;
-                        typingSpeed = 2000; // Pause for 2 seconds
+                        typingSpeed = 2000;
                     }
                 }
 
                 if (charIndex === 0 && isDeleting) {
-                    // Done deleting, move to next phrase
                     isDeleting = false;
                     phraseIndex = (phraseIndex + 1) % phrases.length;
-                    typingSpeed = 300; // Wait a bit before starting the next phrase
+                    typingSpeed = 300;
                 }
 
-                // Add a very subtle, random glitch class during typing/deleting
                 if (Math.random() < 0.1) {
                     typingTextElement.classList.add('glitch-text');
                 } else {
@@ -362,8 +526,33 @@
                 setTimeout(typeWriter, typingSpeed);
             }
 
-            // Start the typewriter effect
             typeWriter();
+            
+            // --- 2. Custom Cursor Effect ---
+            
+            // Move cursor dot with the mouse (faster transition)
+            window.addEventListener('mousemove', (e) => {
+                cursorDot.style.left = e.clientX + 'px';
+                cursorDot.style.top = e.clientY + 'px';
+                // Cursor outline follows slower for a trailing effect
+                cursorOutline.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
+            });
+            
+            // Interaction logic (enlarging cursor on hover)
+            document.querySelectorAll(interactiveElements).forEach(el => {
+                el.addEventListener('mouseenter', () => {
+                    cursorDot.style.transform = 'translate(-50%, -50%) scale(2.5)';
+                    cursorOutline.style.width = '60px';
+                    cursorOutline.style.height = '60px';
+                    cursorOutline.style.opacity = '0.5';
+                });
+                el.addEventListener('mouseleave', () => {
+                    cursorDot.style.transform = 'translate(-50%, -50%) scale(1)';
+                    cursorOutline.style.width = '40px';
+                    cursorOutline.style.height = '40px';
+                    cursorOutline.style.opacity = '1';
+                });
+            });
         });
     </script>
 </body>
