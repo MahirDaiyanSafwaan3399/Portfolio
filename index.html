@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mahir Daiyan Safwaan // DECODE.MATRIX</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Define colors based on the theme (Neon Cyan, Yellow, Magenta) */
+        :root {
+            --neon-cyan: #00FFFF;
+            --neon-yellow: #FFFF00;
+            --neon-magenta: #FF00FF;
+            --dark-bg: #0A0A0A;
+            --mid-dark: #1A1A1A;
+            --grid-bg: radial-gradient(circle, var(--mid-dark) 1px, transparent 1px);
+            --grid-size: 20px;
+        }
+
+        body {
+            font-family: 'Space Mono', monospace; /* Monospace font for the terminal feel */
+            background-color: var(--dark-bg);
+            color: var(--neon-cyan);
+            overflow-x: hidden;
+            /* Subtle grid background to enhance the "hacker" look */
+            background-image: var(--grid-bg);
+            background-size: var(--grid-size) var(--grid-size);
+            animation: flicker 15s infinite alternate; /* Very subtle background flicker */
+        }
+
+        /* Utility classes for neon glow and borders */
+        .neon-text-cyan {
+            text-shadow: 0 0 5px var(--neon-cyan), 0 0 10px var(--neon-cyan);
+            color: var(--neon-cyan);
+        }
+
+        .neon-border-cyan {
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 5px var(--neon-cyan);
+        }
+
+        .bg-neon-yellow {
+            background-color: var(--neon-yellow);
+            color: var(--dark-bg);
+            box-shadow: 0 0 8px var(--neon-yellow);
+        }
+
+        .bg-neon-magenta {
+            background-color: var(--neon-magenta);
+            color: var(--dark-bg);
+            box-shadow: 0 0 8px var(--neon-magenta);
+        }
+
+        .section-box {
+            border: 1px solid var(--mid-dark);
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .section-box:hover {
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .link-glow:hover {
+            color: var(--neon-yellow);
+            text-shadow: 0 0 5px var(--neon-yellow);
+            transition: all 0.2s ease;
+        }
+
+        /* Keyframe animation for subtle background flicker */
+        @keyframes flicker {
+            0% { opacity: 1; }
+            5% { opacity: 0.98; }
+            10% { opacity: 1; }
+            15% { opacity: 0.99; }
+            20% { opacity: 1; }
+            100% { opacity: 1; }
+        }
+
+        /* Keyframe for the glitching text effect (simulated) */
+        @keyframes glitch {
+            0% { transform: translate(0); opacity: 1; }
+            20% { transform: translate(2px, -2px); opacity: 0.9; }
+            40% { transform: translate(-2px, 2px); opacity: 1; }
+            60% { transform: translate(1px, 1px); opacity: 0.95; }
+            80% { transform: translate(-1px, -1px); opacity: 1; }
+            100% { transform: translate(0); opacity: 1; }
+        }
+
+        .glitch-text {
+            animation: glitch 1.5s infinite linear alternate;
+        }
+
+        /* Custom scrollbar for better theme integration */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--dark-bg);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--neon-magenta);
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <!-- Header / Navigation -->
+    <header class="sticky top-0 z-50 p-4 border-b border-gray-900 shadow-lg" style="background-color: rgba(10, 10, 10, 0.95);">
+        <nav class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="text-xl font-bold neon-text-cyan hover:link-glow transition">MAHIR</div>
+            <div class="space-x-4 flex items-center text-sm sm:text-base">
+                <a href="#about" class="link-glow text-gray-400 hover:text-white">ABOUT</a>
+                <a href="#skills" class="link-glow text-gray-400 hover:text-white">SKILLS</a>
+                <a href="#experience" class="link-glow text-gray-400 hover:text-white">EXPERIENCE</a>
+                <a href="#projects" class="link-glow text-gray-400 hover:text-white">PROJECTS</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 py-8">
+
+        <!-- HERO SECTION -->
+        <section id="about" class="py-16 sm:py-24 border-b-2 border-dashed border-gray-800 mb-12">
+            <h1 class="text-3xl sm:text-5xl font-extrabold mb-4">
+                <span class="text-neon-yellow">MAHIR DAIYAN SAFWAAN</span>
+            </h1>
+            <h2 class="text-xl sm:text-3xl font-light mb-6">
+                &gt; <span id="typing-text" class="neon-text-cyan"></span><span class="inline-block w-2 h-6 sm:h-8 bg-neon-cyan animate-pulse"></span>
+            </h2>
+
+            <div class="max-w-4xl text-lg sm:text-xl text-gray-300">
+                <p class="mb-6">
+                    An enthusiastic programmer with extensive experience in <b>JavaScript, C, and C++</b>, focused on solving real-world challenges through technology.
+                    With over <b>1.5+ years of experience</b> in cross-platform app development (Android/iOS), I thrive on bridging software and hardware systems.
+                </p>
+                <p>
+                    My passion extends into <b>Aerospace and Rocketry</b> where I specialize in Avionics Guidance Navigation Control (A&GNC), embedded systems, and model rocketry research.
+                </p>
+            </div>
+            <div class="mt-8 flex flex-wrap gap-4 text-sm sm:text-base">
+                <a href="mailto:msafwaan30@gmail.com" class="px-5 py-2 rounded-lg bg-neon-magenta text-white font-bold transition hover:opacity-80">
+                    <span class="glitch-text">CONTACT &gt;</span>
+                </a>
+                <a href="https://www.linkedin.com/in/safwaan30/" target="_blank" class="px-5 py-2 rounded-lg border-2 border-neon-cyan text-neon-cyan font-bold transition hover:bg-neon-cyan hover:text-dark-bg">
+                    LINKEDIN
+                </a>
+            </div>
+        </section>
+
+        <!-- SKILLS SECTION -->
+        <section id="skills" class="my-12">
+            <h3 class="text-3xl font-bold mb-8 neon-text-cyan border-b-2 border-neon-yellow pb-2">01. { SKILLS_MATRIX }</h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Languages -->
+                <div class="section-box rounded-xl">
+                    <h4 class="text-xl font-bold mb-3 text-neon-yellow">LANGUAGES [DECODE]</h4>
+                    <ul class="space-y-2 text-gray-300 list-disc list-inside ml-2">
+                        <li>JavaScript</li>
+                        <li>C, C++ (Embedded & Systems)</li>
+                        <li>Python (Scripting & Data)</li>
+                    </ul>
+                </div>
+
+                <!-- Core Tech -->
+                <div class="section-box rounded-xl">
+                    <h4 class="text-xl font-bold mb-3 text-neon-magenta">CORE TECHNOLOGIES [BUILD]</h4>
+                    <div class="flex flex-wrap gap-2 text-xs sm:text-sm">
+                        <span class="px-3 py-1 bg-neon-magenta rounded-full">React</span>
+                        <span class="px-3 py-1 bg-neon-magenta rounded-full">React Native</span>
+                        <span class="px-3 py-1 bg-neon-magenta rounded-full">Firebase / Node.js</span>
+                        <span class="px-3 py-1 bg-neon-magenta rounded-full">NextJS</span>
+                        <span class="px-3 py-1 bg-neon-magenta rounded-full">Embedded Systems (STM32/Arduino)</span>
+                    </div>
+                </div>
+
+                <!-- Tools & Libraries -->
+                <div class="section-box rounded-xl">
+                    <h4 class="text-xl font-bold mb-3 text-neon-cyan">TOOLS & LIBRARIES [ANALYZE]</h4>
+                    <div class="flex flex-wrap gap-2 text-xs sm:text-sm">
+                        <span class="px-3 py-1 bg-neon-cyan text-dark-bg rounded-full">OPENMCT</span>
+                        <span class="px-3 py-1 bg-neon-cyan text-dark-bg rounded-full">KiCad / Altium</span>
+                        <span class="px-3 py-1 bg-neon-cyan text-dark-bg rounded-full">Numpy/SciPy/Matplotlib</span>
+                        <span class="px-3 py-1 bg-neon-cyan text-dark-bg rounded-full">D3.JS / Chart JS</span>
+                        <span class="px-3 py-1 bg-neon-cyan text-dark-bg rounded-full">Reverse Engineering</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- EXPERIENCE SECTION -->
+        <section id="experience" class="my-12">
+            <h3 class="text-3xl font-bold mb-8 neon-text-cyan border-b-2 border-neon-yellow pb-2">02. { EXECUTION_LOGS }</h3>
+
+            <div class="space-y-8">
+                <!-- AERD -->
+                <div class="section-box rounded-xl border-l-4 border-neon-cyan">
+                    <div class="flex justify-between flex-col sm:flex-row">
+                        <h4 class="text-xl font-bold text-neon-cyan">Amateur Experimental Rocketry Bangladesh (AERD)</h4>
+                        <span class="text-sm text-gray-500 italic">Aug 2024 - Present</span>
+                    </div>
+                    <p class="text-neon-yellow font-semibold mb-3">Avionics, Guidance, Navigation and Control (A&GNC)</p>
+                    <ul class="space-y-2 text-gray-300 list-disc list-inside ml-4">
+                        <li>Developed a <b>Ground Controlled System (GCS)</b> for real-time data transmission and servo control based on Cartesian coordinates and Euler's angle.</li>
+                        <li>Maintained NASA's <b>OPEN MCT</b> for mission-critical telemetry data visualization.</li>
+                        <li>Implemented flight control software using <b>Arduino<b> and <b>MQTT</b> protocol for real-time data ingestion.</li>
+                        <li>Gained expertise in <b>nozzle theory</b>, solid/liquid propellants, and electric propulsion.</li>
+                    </ul>
+                </div>
+
+                <!-- Dhumketu -->
+                <div class="section-box rounded-xl border-l-4 border-neon-magenta">
+                    <div class="flex justify-between flex-col sm:flex-row">
+                        <h4 class="text-xl font-bold text-neon-magenta">Dhumketu Exploration Company Limited</h4>
+                        <span class="text-sm text-gray-500 italic">Apr 2024 - Oct 2024</span>
+                    </div>
+                    <p class="text-neon-yellow font-semibold mb-3">Embedded Systems and Avionics System Intern</p>
+                    <ul class="space-y-2 text-gray-300 list-disc list-inside ml-4">
+                        <li>Designed a custom <b>2-layer STM32 board</b> using <b>Altium Designer</b>.</li>
+                        <li>Applied control theory algorithms (<b>PID, Kalman Filter, Particle Filter</b>) to accurately process sensor values.</li>
+                    </ul>
+                </div>
+
+                <!-- CIOL -->
+                <div class="section-box rounded-xl border-l-4 border-neon-yellow">
+                    <div class="flex justify-between flex-col sm:flex-row">
+                        <h4 class="text-xl font-bold text-neon-yellow">Computational Intelligence and Operations Laboratory (CIOL)</h4>
+                        <span class="text-sm text-gray-500 italic">Oct 2024 - Jan 2025</span>
+                    </div>
+                    <p class="text-neon-cyan font-semibold mb-3">Research Student</p>
+                    <ul class="space-y-2 text-gray-300 list-disc list-inside ml-4">
+                        <li>Conducted a literature review on the impact of <b>Large Language Models (LLMs)</b> on human creativity.</li>
+                        <li>Engaged in learning <b>AI and ML</b> fundamentals, focusing on <b>Python</b> and <b>Data Preprocessing</b>.</li>
+                    </ul>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- PROJECTS SECTION -->
+        <section id="projects" class="my-12">
+            <h3 class="text-3xl font-bold mb-8 neon-text-cyan border-b-2 border-neon-yellow pb-2">03. { PROJECT_ARTIFACTS }</h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Project 1: Until The EU -->
+                <div class="section-box rounded-xl border-t-4 border-neon-cyan hover:border-neon-yellow">
+                    <h4 class="text-xl font-bold mb-2 text-neon-cyan">Until The EU (e-ICON Champion)</h4>
+                    <p class="text-sm text-gray-500 mb-3">Mobile Development (Android/iOS)</p>
+                    <p class="text-gray-400">
+                        A cross-platform mobile app that measures <b>student stress levels</b> and provides a personalized track for managing depression.
+                    </p>
+                    <div class="mt-4 text-xs font-semibold">
+                        <span class="px-2 py-1 bg-neon-cyan text-dark-bg rounded-full mr-1">React Native</span>
+                        <span class="px-2 py-1 bg-neon-cyan text-dark-bg rounded-full">World Champion</span>
+                    </div>
+                </div>
+
+                <!-- Project 2: Alibi -->
+                <div class="section-box rounded-xl border-t-4 border-neon-magenta hover:border-neon-cyan">
+                    <h4 class="text-xl font-bold mb-2 text-neon-magenta">Alibi</h4>
+                    <p class="text-sm text-gray-500 mb-3">Web Application</p>
+                    <p class="text-gray-400">
+                        A fully functional web platform for university students to keep track of classes, featuring custom <b>routine, teacher, and course management</b> using a full-stack architecture.
+                    </p>
+                    <div class="mt-4 text-xs font-semibold">
+                        <span class="px-2 py-1 bg-neon-magenta rounded-full mr-1">React</span>
+                        <span class="px-2 py-1 bg-neon-magenta rounded-full">Firebase</span>
+                    </div>
+                </div>
+
+                <!-- Project 3: Bare Metal Pomodoro -->
+                <div class="section-box rounded-xl border-t-4 border-neon-yellow hover:border-neon-magenta">
+                    <h4 class="text-xl font-bold mb-2 text-neon-yellow">Bare Metal Pomodoro Timer</h4>
+                    <p class="text-sm text-gray-500 mb-3">Embedded Systems</p>
+                    <p class="text-gray-400">
+                        Development of a fully functional Pomodoro timer using the <b>Atmega328P<b> microcontroller, coded entirely at the bare metal level for maximum efficiency.
+                    </p>
+                    <div class="mt-4 text-xs font-semibold">
+                        <span class="px-2 py-1 bg-neon-yellow text-dark-bg rounded-full mr-1">Atmega328P</span>
+                        <span class="px-2 py-1 bg-neon-yellow text-dark-bg rounded-full">C/C++</span>
+                    </div>
+                </div>
+
+                <!-- Project 4: SHUNBO Discord Bot -->
+                <div class="section-box rounded-xl border-t-4 border-gray-500 hover:border-neon-cyan">
+                    <h4 class="text-xl font-bold mb-2 text-gray-300">SHUNBO (Discord Bot)</h4>
+                    <p class="text-sm text-gray-500 mb-3">Automation/Backend</p>
+                    <p class="text-gray-400">
+                        A Discord bot coded with <b>JavaScript<b> and running on a local server, designed to download audio from YouTube and deliver the MP3 format directly to the user's DM.
+                    </p>
+                    <div class="mt-4 text-xs font-semibold">
+                        <span class="px-2 py-1 bg-gray-500 text-white rounded-full mr-1">DiscordJS</span>
+                        <span class="px-2 py-1 bg-gray-500 text-white rounded-full">Node.js</span>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-12 p-6 text-center border-t border-gray-900 text-sm text-gray-500">
+        <p>RECODE THE WORLD // &copy; 2025 MAHIR DAIYAN SAFWAAN // SYSTEM V.1.0</p>
+    </footer>
+
+    <!-- JavaScript for the Glitching Typing Effect -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const typingTextElement = document.getElementById('typing-text');
+            const phrases = [
+                "Avionics & GNC Engineer",
+                "Cross-Platform Developer",
+                "Embedded Systems Enthusiast",
+                "Decode the Matrix, Recode the World"
+            ];
+            let phraseIndex = 0;
+            let charIndex = 0;
+            let isDeleting = false;
+            let typingSpeed = 100;
+
+            function typeWriter() {
+                const currentPhrase = phrases[phraseIndex];
+
+                if (isDeleting) {
+                    // Deleting phase (fast)
+                    typingTextElement.textContent = currentPhrase.substring(0, charIndex - 1);
+                    charIndex--;
+                    typingSpeed = 50;
+                } else {
+                    // Typing phase (slow)
+                    if (charIndex < currentPhrase.length) {
+                        typingTextElement.textContent = currentPhrase.substring(0, charIndex + 1);
+                        charIndex++;
+                        typingSpeed = 100 + Math.random() * 50; // Randomize typing speed for organic feel
+                    } else {
+                        // Pause at the end of the phrase
+                        isDeleting = true;
+                        typingSpeed = 2000; // Pause for 2 seconds
+                    }
+                }
+
+                if (charIndex === 0 && isDeleting) {
+                    // Done deleting, move to next phrase
+                    isDeleting = false;
+                    phraseIndex = (phraseIndex + 1) % phrases.length;
+                    typingSpeed = 300; // Wait a bit before starting the next phrase
+                }
+
+                // Add a very subtle, random glitch class during typing/deleting
+                if (Math.random() < 0.1) {
+                    typingTextElement.classList.add('glitch-text');
+                } else {
+                    typingTextElement.classList.remove('glitch-text');
+                }
+
+                setTimeout(typeWriter, typingSpeed);
+            }
+
+            // Start the typewriter effect
+            typeWriter();
+        });
+    </script>
+</body>
+</html>
