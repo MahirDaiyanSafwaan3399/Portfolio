@@ -4,456 +4,367 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mahir Daiyan Safwaan</title>
-    <!-- Load Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Tailwind CSS --><script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Load Three.js for 3D Background --><script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
     <style>
-        /* Define colors based on the theme (Neon Cyan, Yellow, Magenta) */
+        /* Define colors based on the theme - Perfected Blend */
         :root {
-            --neon-cyan: #00FFFF;
-            --neon-yellow: #FFFF00;
-            --neon-magenta: #FF00FF; /* Keeping it defined but using it minimally */
+            --neon-cyan: #00E5E5; /* Slightly less bright cyan */
+            --neon-yellow: #FFFF66; /* Slightly softer yellow */
+            --neon-magenta: #FF66FF; /* More balanced pinkish magenta */
             --dark-bg: #0A0A0A;
             --mid-dark: #1A1A1A;
-            --grid-bg: radial-gradient(circle, var(--mid-dark) 1px, transparent 1px);
+            --light-text: #F0F0F0; /* Brighter white for better body readability */
+            
+            /* Grid background pattern */
+            --grid-bg-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><rect width="20" height="20" fill="transparent"/><circle cx="0" cy="0" r="0.5" fill="%231A1A1A"/><circle cx="20" cy="0" r="0.5" fill="%231A1A1A"/><circle cx="0" cy="20" r="0.5" fill="%231A1A1A"/><circle cx="20" cy="20" r="0.5" fill="%231A1A1A"/><circle cx="10" cy="10" r="0.5" fill="%231A1A1A"/></svg>');
             --grid-size: 20px;
         }
 
         body {
-            font-family: 'Space Mono', monospace; /* Monospace font for the terminal feel */
+            font-family: 'Space Mono', monospace;
             background-color: var(--dark-bg);
-            color: var(--neon-cyan);
+            color: var(--light-text); 
             overflow-x: hidden;
-            /* Subtle grid background to enhance the "hacker" look */
-            background-image: var(--grid-bg);
+            
+            background-image: var(--grid-bg-image);
             background-size: var(--grid-size) var(--grid-size);
-            animation: flicker 15s infinite alternate; /* Very subtle background flicker */
-            cursor: none; /* Hide default cursor */
-        }
-
-        /* Utility classes for neon glow and borders */
-        .neon-text-cyan {
-            text-shadow: 0 0 5px var(--neon-cyan), 0 0 10px var(--neon-cyan);
-            color: var(--neon-cyan);
-        }
-
-        .neon-border-cyan {
-            border-color: var(--neon-cyan);
-            box-shadow: 0 0 5px var(--neon-cyan);
-        }
-
-        .bg-neon-yellow {
-            background-color: var(--neon-yellow);
-            color: var(--dark-bg);
-            box-shadow: 0 0 8px var(--neon-yellow);
-        }
-
-        /* Adjusted link color to cyan/yellow palette */
-        .bg-action-btn {
-            background-color: var(--neon-cyan);
-            color: var(--dark-bg);
-            box-shadow: 0 0 10px var(--neon-cyan);
-        }
-        .bg-action-btn:hover {
-            background-color: var(--neon-yellow);
-            box-shadow: 0 0 10px var(--neon-yellow);
+            animation: flicker 15s infinite alternate;
+            cursor: none;
         }
         
-        /* New 3D hover effect for section boxes */
+        /* Three.js Canvas Styling */
+        #three-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.1; /* Minimal background presence */
+            transition: opacity 1s ease;
+        }
+
+        /* Content Container */
+        #content-container {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+        }
+
+        /* Utility classes for neon glow (SUBTLY REDUCED) */
+        .neon-text-cyan {
+            text-shadow: 0 0 2px var(--neon-cyan), 0 0 4px var(--neon-cyan);
+            color: var(--neon-cyan);
+        }
+        .neon-text-yellow {
+            text-shadow: 0 0 2px var(--neon-yellow), 0 0 4px var(--neon-yellow);
+            color: var(--neon-yellow);
+        }
+        /* Magenta is now the designated accent color for key text */
+        .neon-text-magenta-accent {
+            text-shadow: 0 0 2px var(--neon-magenta), 0 0 4px var(--neon-magenta);
+            color: var(--neon-magenta);
+        }
+
+        /* Action Buttons */
+        .btn-primary { 
+            background-color: var(--neon-yellow);
+            color: var(--dark-bg);
+            box-shadow: 0 0 4px var(--neon-yellow); /* Reduced glow */
+        }
+        .btn-primary:hover {
+            background-color: var(--neon-magenta); /* Hover to Magenta */
+            box-shadow: 0 0 6px var(--neon-magenta);
+        }
+
+        .btn-secondary { 
+            border: 2px solid var(--neon-cyan);
+            color: var(--neon-cyan);
+            box-shadow: 0 0 2px var(--neon-cyan); 
+        }
+        .btn-secondary:hover {
+            background-color: var(--neon-cyan);
+            color: var(--dark-bg);
+            box-shadow: 0 0 6px var(--neon-cyan);
+        }
+        
+        /* Section Boxes - refining hover glow and adding 3D prep */
         .section-box {
             border: 1px solid var(--mid-dark);
             padding: 1.5rem;
             transition: all 0.5s ease;
             transform-style: preserve-3d;
             perspective: 1000px;
-            background-color: var(--mid-dark); /* Ensure dark background for sections */
-            border-radius: 0.5rem; /* Tailwind 'rounded-xl' equivalent */
-        }
-
-        .section-box:hover {
-            border-color: var(--neon-cyan);
-            box-shadow: 0 0 20px rgba(0, 255, 255, 0.6), inset 0 0 10px rgba(0, 255, 255, 0.2);
-            transform: translateZ(10px) translateY(-5px); /* Lift and push forward */
+            background-color: rgba(10, 10, 10, 0.85); /* Less transparent for better text contrast */
+            border-radius: 0.5rem;
+            /* Initial state for tilt (no tilt) */
+            transform: perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1); 
+            /* Initial shadow for reset */
+            box-shadow: 0 0 10px rgba(255, 102, 255, 0.0), inset 0 0 5px rgba(255, 102, 255, 0.0);
         }
 
         .link-glow:hover {
-            color: var(--neon-yellow);
-            text-shadow: 0 0 5px var(--neon-yellow);
+            color: var(--neon-magenta); /* Navigation links glow magenta on hover */
+            text-shadow: 0 0 4px var(--neon-magenta);
             transition: all 0.2s ease;
         }
 
-        /* Keyframe animation for subtle background flicker */
-        @keyframes flicker {
-            0% { opacity: 1; }
-            5% { opacity: 0.98; }
-            10% { opacity: 1; }
-            15% { opacity: 0.99; }
-            20% { opacity: 1; }
-            100% { opacity: 1; }
-        }
-
-        /* Keyframe for the glitching text effect (simulated) */
-        @keyframes glitch {
-            0% { transform: translate(0); opacity: 1; }
-            20% { transform: translate(2px, -2px); opacity: 0.9; }
-            40% { transform: translate(-2px, 2px); opacity: 1; }
-            60% { transform: translate(1px, 1px); opacity: 0.95; }
-            80% { transform: translate(-1px, -1px); opacity: 1; }
-            100% { transform: translate(0); opacity: 1; }
-        }
-
-        .glitch-text {
-            animation: glitch 1.5s infinite linear alternate;
-        }
-
         /* Custom cursor styling */
-        .cursor-dot {
-            width: 10px;
-            height: 10px;
-            background-color: var(--neon-cyan);
-            border-radius: 50%;
-            position: fixed;
-            z-index: 9999;
-            pointer-events: none;
-            transition: transform 0.1s ease-out;
-            transform: translate(-50%, -50%);
-            box-shadow: 0 0 5px var(--neon-cyan), 0 0 15px var(--neon-cyan);
-            mix-blend-mode: screen; /* Makes it look like light */
-        }
-        
-        .cursor-outline {
-            width: 40px;
-            height: 40px;
-            border: 2px solid var(--neon-yellow);
-            border-radius: 50%;
-            position: fixed;
-            z-index: 9998;
-            pointer-events: none;
-            transition: transform 0.3s ease-out, opacity 0.3s;
-            transform: translate(-50%, -50%);
-            mix-blend-mode: exclusion;
-        }
+        .cursor-dot { width: 10px; height: 10px; background-color: var(--neon-cyan); border-radius: 50%; position: fixed; z-index: 9999; pointer-events: none; transition: transform 0.1s ease-out; transform: translate(-50%, -50%); box-shadow: 0 0 2px var(--neon-cyan), 0 0 8px var(--neon-cyan); mix-blend-mode: screen; }
+        .cursor-outline { width: 40px; height: 40px; border: 2px solid var(--neon-yellow); border-radius: 50%; position: fixed; z-index: 9998; pointer-events: none; transition: transform 0.3s ease-out, opacity 0.3s; transform: translate(-50%, -50%); mix-blend-mode: exclusion; }
 
-        /* Custom scrollbar for better theme integration */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: var(--dark-bg);
-        }
-        ::-webkit-scrollbar-thumb {
-            background: var(--neon-cyan); /* Changed scrollbar color to Cyan */
-            border-radius: 4px;
-        }
-        
-        /* --- Hamburger Menu Styles --- */
-        .hamburger {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-around;
-            width: 30px;
-            height: 30px;
-            cursor: pointer;
-            z-index: 60; /* Above nav links */
-        }
-
-        .line {
-            width: 100%;
-            height: 3px;
-            background-color: var(--neon-cyan);
-            transition: all 0.3s linear;
-            transform-origin: 1px;
-            box-shadow: 0 0 5px var(--neon-cyan);
-        }
-
-        .hamburger.open .line:nth-child(1) {
-            transform: rotate(45deg) translate(2px, 2px);
-        }
-
-        .hamburger.open .line:nth-child(2) {
-            opacity: 0;
-            transform: translateX(-10px);
-        }
-
-        .hamburger.open .line:nth-child(3) {
-            transform: rotate(-45deg) translate(2px, -2px);
-        }
-        
-        /* Mobile Menu Container */
-        .mobile-menu {
-            position: fixed;
-            top: 0;
-            right: 0;
-            width: 100%;
-            height: 100vh;
-            background-color: rgba(10, 10, 10, 0.98); /* Very dark, slightly transparent background */
-            z-index: 55;
-            transform: translateX(100%);
-            transition: transform 0.5s ease-in-out;
-            padding-top: 6rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .mobile-menu.open {
-            transform: translateX(0);
-        }
+        /* Other styles for responsiveness and animations remain the same */
+        @keyframes flicker { 0% { opacity: 1; } 5% { opacity: 0.99; } 10% { opacity: 1; } 15% { opacity: 0.99; } 20% { opacity: 1; } 100% { opacity: 1; } }
+        @keyframes glitch { 0% { transform: translate(0); opacity: 1; } 20% { transform: translate(1px, -1px); opacity: 0.9; } 40% { transform: translate(-1px, 1px); opacity: 1; } 60% { transform: translate(0.5px, 0.5px); opacity: 0.95; } 80% { transform: translate(-0.5px, -0.5px); opacity: 1; } 100% { transform: translate(0); opacity: 1; } }
+        .glitch-text { animation: glitch 1.5s infinite linear alternate; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--dark-bg); }
+        ::-webkit-scrollbar-thumb { background: var(--neon-cyan); border-radius: 4px; }
+        .hamburger { display: flex; flex-direction: column; justify-content: space-around; width: 30px; height: 30px; cursor: pointer; z-index: 60; }
+        .line { width: 100%; height: 3px; background-color: var(--neon-cyan); transition: all 0.3s linear; transform-origin: 1px; box-shadow: 0 0 3px var(--neon-cyan); }
+        .hamburger.open .line:nth-child(1) { transform: rotate(45deg) translate(2px, 2px); }
+        .hamburger.open .line:nth-child(2) { opacity: 0; transform: translateX(-10px); }
+        .hamburger.open .line:nth-child(3) { transform: rotate(-45deg) translate(2px, -2px); }
+        .mobile-menu { position: fixed; top: 0; right: 0; width: 100%; height: 100vh; background-color: rgba(10, 10, 10, 0.98); z-index: 55; transform: translateX(100%); transition: transform 0.5s ease-in-out; padding-top: 6rem; display: flex; flex-direction: column; align-items: center; }
+        .mobile-menu.open { transform: translateX(0); }
     </style>
 </head>
 <body class="min-h-screen">
 
-    <!-- Custom Cursor Elements -->
-    <div id="cursor-dot" class="cursor-dot"></div>
+    <!-- 3D Background Canvas --><canvas id="three-canvas"></canvas>
+
+    <!-- Custom Cursor Elements --><div id="cursor-dot" class="cursor-dot"></div>
     <div id="cursor-outline" class="cursor-outline"></div>
 
-    <!-- Header / Navigation -->
-    <header class="sticky top-0 z-50 p-4 border-b border-gray-900 shadow-lg" style="background-color: rgba(10, 10, 10, 0.95);">
-        <nav class="max-w-7xl mx-auto flex justify-between items-center">
-            <!-- 1. Changed "M.D.S." to "MAHIR" -->
-            <div class="text-xl font-bold neon-text-cyan hover:link-glow transition">MAHIR</div>
-            
-            <!-- Desktop Navigation Links (Hidden on small screens) -->
-            <div id="desktop-nav" class="hidden sm:flex space-x-4 items-center text-sm sm:text-base">
-                <a href="#about" class="link-glow text-gray-400 hover:text-white">ABOUT</a>
-                <a href="#skills" class="link-glow text-gray-400 hover:text-white">SKILLS</a>
-                <a href="#experience" class="link-glow text-gray-400 hover:text-white">EXPERIENCE</a>
-                <a href="#projects" class="link-glow text-gray-400 hover:text-white">PROJECTS</a>
-            </div>
-            
-            <!-- Hamburger Button (Visible on small screens) -->
-            <div id="hamburger-btn" class="sm:hidden hamburger">
-                <div class="line"></div>
-                <div class="line"></div>
-                <div class="line"></div>
-            </div>
-        </nav>
-    </header>
-    
-    <!-- Mobile Menu Container -->
-    <div id="mobile-menu" class="mobile-menu sm:hidden">
-        <a href="#about" class="neon-text-cyan text-3xl mb-8 link-glow hover:text-neon-yellow" onclick="closeMenu()">ABOUT</a>
-        <a href="#skills" class="neon-text-cyan text-3xl mb-8 link-glow hover:text-neon-yellow" onclick="closeMenu()">SKILLS</a>
-        <a href="#experience" class="neon-text-cyan text-3xl mb-8 link-glow hover:text-neon-yellow" onclick="closeMenu()">EXPERIENCE</a>
-        <a href="#projects" class="neon-text-cyan text-3xl mb-8 link-glow hover:text-neon-yellow" onclick="closeMenu()">PROJECTS</a>
-        <a href="mailto:+8801880830398" class="text-neon-yellow text-xl mt-8 underline link-glow" onclick="closeMenu()">CONTACT ME</a>
+    <!-- Main Content Container --><div id="content-container">
+
+        <!-- Header / Navigation --><header class="sticky top-0 z-50 p-4 border-b border-gray-900 shadow-lg" style="background-color: rgba(10, 10, 10, 0.95);">
+            <nav class="max-w-7xl mx-auto flex justify-between items-center">
+                <div class="text-xl font-bold neon-text-cyan hover:link-glow transition">MAHIR</div>
+                
+                <!-- Desktop Navigation Links (Hidden on small screens) --><div id="desktop-nav" class="hidden sm:flex space-x-4 items-center text-sm sm:text-base">
+                    <a href="#about" class="link-glow text-light-text hover:text-white">ABOUT</a>
+                    <a href="#skills" class="link-glow text-light-text hover:text-white">SKILLS</a>
+                    <a href="#experience" class="link-glow text-light-text hover:text-white">EXPERIENCE</a>
+                    <a href="#projects" class="link-glow text-light-text hover:text-white">PROJECTS</a>
+                </div>
+                
+                <!-- Hamburger Button (Visible on small screens) --><div id="hamburger-btn" class="sm:hidden hamburger">
+                    <div class="line"></div>
+                    <div class="line"></div>
+                    <div class="line"></div>
+                </div>
+            </nav>
+        </header>
+        
+        <!-- Mobile Menu Container --><div id="mobile-menu" class="mobile-menu sm:hidden">
+            <a href="#about" class="neon-text-cyan text-3xl mb-8 link-glow hover:text-neon-magenta-accent" onclick="closeMenu()">ABOUT</a>
+            <a href="#skills" class="neon-text-cyan text-3xl mb-8 link-glow hover:text-neon-magenta-accent" onclick="closeMenu()">SKILLS</a>
+            <a href="#experience" class="neon-text-cyan text-3xl mb-8 link-glow hover:text-neon-magenta-accent" onclick="closeMenu()">EXPERIENCE</a>
+            <a href="#projects" class="neon-text-cyan text-3xl mb-8 link-glow hover:text-neon-magenta-accent" onclick="closeMenu()">PROJECTS</a>
+            <a href="mailto:+8801880830398" class="neon-text-yellow text-xl mt-8 underline link-glow hover:text-neon-magenta-accent" onclick="closeMenu()">CONTACT ME</a>
+        </div>
+
+        <main class="max-w-7xl mx-auto px-4 py-8">
+
+            <!-- HERO SECTION --><section id="about" class="py-16 sm:py-24 border-b-2 border-dashed border-gray-800 mb-12">
+                <h1 class="text-3xl sm:text-5xl font-extrabold mb-4">
+                    <span class="neon-text-yellow">MAHIR DAIYAN SAFWAAN</span>
+                </h1>
+                <h2 class="text-xl sm:text-3xl font-light mb-6">
+                    &gt; <span id="typing-text" class="neon-text-cyan"></span><span class="inline-block w-2 h-6 sm:h-8 bg-neon-cyan animate-pulse"></span>
+                </h2>
+
+                <div class="max-w-4xl text-lg sm:text-xl text-light-text">
+                    <p class="mb-6">
+                        An enthusiastic programmer with extensive experience in <b>JavaScript, C, and C++</b>, focused on solving real-world challenges through technology.
+                        With over <b>1.5+ years of experience</b> in cross-platform app development (Android/iOS), I thrive on bridging software and hardware systems.
+                    </p>
+                    <p>
+                        My passion extends into <b>Aerospace and Rocketry</b>, where I specialize in Avionics Guidance Navigation Control (A&GNC), embedded systems, and model rocketry research.
+                    </p>
+                </div>
+                <div class="mt-8 flex flex-wrap gap-4 text-sm sm:text-base">
+                    <!-- CONTACT BUTTON --><a href="mailto:msafwaan30@gmail.com" class="px-5 py-2 rounded-lg btn-primary font-bold transition hover:opacity-80">
+                        <span class="glitch-text">CONTACT &gt;</span>
+                    </a>
+                    <!-- LINKEDIN BUTTON --><a href="https://www.linkedin.com/in/safwaan30/" target="_blank" class="px-5 py-2 rounded-lg btn-secondary font-bold transition">
+                        LINKEDIN
+                    </a>
+                </div>
+            </section>
+
+            <!-- SKILLS SECTION --><section id="skills" class="my-12">
+                <h3 class="text-3xl font-bold mb-8 neon-text-cyan border-b-2 border-neon-magenta pb-2">01. { SKILLS_MATRIX }</h3>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Languages --><div class="section-box rounded-xl">
+                        <h4 class="text-xl font-bold mb-3 neon-text-yellow">LANGUAGES [DECODE]</h4>
+                        <ul class="space-y-2 text-light-text list-disc list-inside ml-2">
+                            <li>JavaScript (Primary)</li>
+                            <li>C, C++ (Embedded & Systems)</li>
+                            <li>Python (Scripting & Data)</li>
+                        </ul>
+                    </div>
+
+                    <!-- Core Tech --><div class="section-box rounded-xl">
+                        <h4 class="text-xl font-bold mb-3 neon-text-cyan">CORE TECHNOLOGIES [BUILD]</h4>
+                        <div class="flex flex-wrap gap-2 text-xs sm:text-sm">
+                            <span class="px-3 py-1 bg-neon-cyan text-dark-bg rounded-full">React</span>
+                            <span class="px-3 py-1 bg-neon-cyan text-dark-bg rounded-full">React Native</span>
+                            <span class="px-3 py-1 bg-neon-cyan text-dark-bg rounded-full">Firebase / Node.js</span>
+                            <span class="px-3 py-1 bg-neon-cyan text-dark-bg rounded-full">NextJS</span>
+                            <span class="px-3 py-1 bg-neon-cyan text-dark-bg rounded-full">Embedded Systems (STM32/Arduino)</span>
+                        </div>
+                    </div>
+
+                    <!-- Tools & Libraries --><div class="section-box rounded-xl">
+                        <h4 class="text-xl font-bold mb-3 neon-text-magenta-accent">TOOLS & LIBRARIES [ANALYZE]</h4>
+                        <div class="flex flex-wrap gap-2 text-xs sm:text-sm">
+                            <span class="px-3 py-1 bg-neon-yellow text-dark-bg rounded-full">OPENMCT</span>
+                            <span class="px-3 py-1 bg-neon-yellow text-dark-bg rounded-full">KiCad / Altium</span>
+                            <span class="px-3 py-1 bg-neon-yellow text-dark-bg rounded-full">Numpy/SciPy/Matplotlib</span>
+                            <span class="px-3 py-1 bg-neon-yellow text-dark-bg rounded-full">D3.JS / Chart JS</span>
+                            <span class="px-3 py-1 bg-neon-yellow text-dark-bg rounded-full">Reverse Engineering</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- EXPERIENCE SECTION --><section id="experience" class="my-12">
+                <h3 class="text-3xl font-bold mb-8 neon-text-cyan border-b-2 border-neon-magenta pb-2">02. { EXECUTION_LOGS }</h3>
+
+                <div class="space-y-8">
+                    <!-- AERD --><div class="section-box rounded-xl border-l-4 border-neon-cyan">
+                        <div class="flex justify-between flex-col sm:flex-row">
+                            <h4 class="text-xl font-bold neon-text-cyan">Amateur Experimental Rocketry Bangladesh (AERD)</h4>
+                            <span class="text-sm text-gray-500 italic">Aug 2024 - Present</span>
+                        </div>
+                        <p class="neon-text-magenta-accent font-semibold mb-3">Avionics, Guidance, Navigation and Control (A&GNC)</p>
+                        <ul class="space-y-2 text-light-text list-disc list-inside ml-4">
+                            <li>Developed a <b>Ground Controlled System (GCS)</b> for real-time data transmission and servo control based on Cartesian coordinates and Euler's angle.</li>
+                            <li>Maintained NASA's <b>OPEN MCT</b> for mission-critical telemetry data visualization.</li>
+                            <li>Implemented flight control software using <b>Arduino</b> and <b>MQTT</b> protocol for real-time data ingestion.</li>
+                            <li>Gained expertise in <b>nozzle theory</b>, solid/liquid propellants, and electric propulsion.</li>
+                        </ul>
+                    </div>
+
+                    <!-- Dhumketu --><div class="section-box rounded-xl border-l-4 border-neon-yellow">
+                        <div class="flex justify-between flex-col sm:flex-row">
+                            <h4 class="text-xl font-bold neon-text-yellow">Dhumketu Exploration Company Limited</h4>
+                            <span class="text-sm text-gray-500 italic">Apr 2024 - Oct 2024</span>
+                        </div>
+                        <p class="neon-text-magenta-accent font-semibold mb-3">Embedded Systems and Avionics System Intern</p>
+                        <ul class="space-y-2 text-light-text list-disc list-inside ml-4">
+                            <li>Designed a custom <b>2-layer STM32 board</b> using <b>Altium Designer</b>.</li>
+                            <li>Applied control theory algorithms (<b>PID, Kalman Filter, Particle Filter</b>) to accurately process sensor values.</li>
+                        </ul>
+                    </div>
+
+                    <!-- CIOL --><div class="section-box rounded-xl border-l-4 border-neon-cyan">
+                        <div class="flex justify-between flex-col sm:flex-row">
+                            <h4 class="text-xl font-bold neon-text-cyan">Computational Intelligence and Operations Laboratory (CIOL)</h4>
+                            <span class="text-sm text-gray-500 italic">Oct 2024 - Jan 2025</span>
+                        </div>
+                        <p class="neon-text-magenta-accent font-semibold mb-3">Research Student</p>
+                        <ul class="space-y-2 text-light-text list-disc list-inside ml-4">
+                            <li>Conducted a literature review on the impact of <b>Large Language Models (LLMs)</b> on human creativity.</li>
+                            <li>Engaged in learning <b>AI and ML</b> fundamentals, focusing on <b>Python</b> and <b>Data Preprocessing</b>.</li>
+                        </ul>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- PROJECTS SECTION --><section id="projects" class="my-12">
+                <h3 class="text-3xl font-bold mb-8 neon-text-cyan border-b-2 border-neon-magenta pb-2">03. { PROJECT_ARTIFACTS }</h3>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Project 1: Until The EU --><div class="section-box rounded-xl border-t-4 border-neon-cyan hover:border-neon-magenta-accent">
+                        <h4 class="text-xl font-bold mb-2 neon-text-cyan">Until The EU (e-ICON Champion)</h4>
+                        <p class="text-sm text-gray-400 mb-3">Mobile Development (Android/iOS)</p>
+                        <p class="text-light-text">
+                            A cross-platform mobile app that measures <b>student stress levels</b> and provides a personalized track for managing depression.
+                        </p>
+                        <div class="mt-4 text-xs font-semibold">
+                            <span class="px-2 py-1 bg-neon-cyan text-dark-bg rounded-full mr-1">React Native</span>
+                            <span class="px-2 py-1 bg-neon-cyan text-dark-bg rounded-full">World Champion</span>
+                        </div>
+                    </div>
+
+                    <!-- Project 2: Alibi --><div class="section-box rounded-xl border-t-4 border-neon-yellow hover:border-neon-magenta-accent">
+                        <h4 class="text-xl font-bold mb-2 neon-text-yellow">Alibi</h4>
+                        <p class="text-sm text-gray-400 mb-3">Web Application</p>
+                        <p class="text-light-text">
+                            A fully functional web platform for university students to keep track of classes, featuring custom <b>routine, teacher, and course management</b> using a full-stack architecture.
+                        </p>
+                        <div class="mt-4 text-xs font-semibold">
+                            <span class="px-2 py-1 bg-neon-yellow text-dark-bg rounded-full mr-1">React</span>
+                            <span class="px-2 py-1 bg-neon-yellow text-dark-bg rounded-full">Firebase</span>
+                        </div>
+                    </div>
+
+                    <!-- Project 3: Bare Metal Pomodoro --><div class="section-box rounded-xl border-t-4 border-neon-cyan hover:border-neon-magenta-accent">
+                        <h4 class="text-xl font-bold mb-2 neon-text-cyan">Bare Metal Pomodoro Timer</h4>
+                        <p class="text-sm text-gray-400 mb-3">Embedded Systems</p>
+                        <p class="text-light-text">
+                            Development of a fully functional Pomodoro timer using the <b>Atmega328P</b> microcontroller, coded entirely at the bare metal level for maximum efficiency.
+                        </p>
+                        <div class="mt-4 text-xs font-semibold">
+                            <span class="px-2 py-1 bg-neon-cyan text-dark-bg rounded-full mr-1">Atmega328P</span>
+                            <span class="px-2 py-1 bg-neon-cyan text-dark-bg rounded-full">C/C++</span>
+                        </div>
+                    </div>
+
+                    <!-- Project 4: SHUNBO Discord Bot --><div class="section-box rounded-xl border-t-4 border-neon-yellow hover:border-neon-magenta-accent">
+                        <h4 class="text-xl font-bold mb-2 neon-text-yellow">SHUNBO (Discord Bot)</h4>
+                        <p class="text-sm text-gray-400 mb-3">Automation/Backend</p>
+                        <p class="text-light-text">
+                            A Discord bot coded with <b>JavaScript</b> and running on a local server, designed to download audio from YouTube and deliver the MP3 format directly to the user's DM.
+                        </p>
+                        <div class="mt-4 text-xs font-semibold">
+                            <span class="px-2 py-1 bg-neon-yellow text-dark-bg rounded-full mr-1">DiscordJS</span>
+                            <span class="px-2 py-1 bg-neon-yellow text-dark-bg rounded-full">Node.js</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Project 5: Monthly Payment Manager --><div class="section-box rounded-xl border-t-4 border-neon-cyan hover:border-neon-magenta-accent">
+                        <h4 class="text-xl font-bold mb-2 neon-text-cyan">Monthly Payment Manager</h4>
+                        <p class="text-sm text-gray-400 mb-3">Automation</p>
+                        <p class="text-light-text">
+                            A <b>Python Selenium Automation</b> tool used for automating every month's payment by interacting with the bKash payment gateway.
+                        </p>
+                        <div class="mt-4 text-xs font-semibold">
+                            <span class="px-2 py-1 bg-neon-cyan text-dark-bg rounded-full mr-1">Python</span>
+                            <span class="px-2 py-1 bg-neon-cyan text-dark-bg rounded-full">Selenium</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Project 6: Section Distribution System --><div class="section-box rounded-xl border-t-4 border-neon-yellow hover:border-neon-magenta-accent">
+                        <h4 class="text-xl font-bold mb-2 neon-text-yellow">Section Distribution System</h4>
+                        <p class="text-sm text-gray-400 mb-3">Data Processing/Automation</p>
+                        <p class="text-light-text">
+                            Automated section distribution by reading data from a <b>PDF</b>, processing the information, and creating individual <b>Excel sheets</b> by applying specific filters.
+                        </p>
+                        <div class="mt-4 text-xs font-semibold">
+                            <span class="px-2 py-1 bg-neon-yellow text-dark-bg rounded-full mr-1">Python</span>
+                            <span class="px-2 py-1 bg-neon-yellow text-dark-bg rounded-full">Data Processing</span>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer --><footer class="mt-12 p-6 text-center border-t border-gray-900 text-sm text-gray-500">
+            <p>RECODE THE WORLD // &copy; 2025 MAHIR DAIYAN SAFWAAN // SYSTEM V.1.7</p>
+        </footer>
     </div>
 
-    <main class="max-w-7xl mx-auto px-4 py-8">
-
-        <!-- HERO SECTION -->
-        <section id="about" class="py-16 sm:py-24 border-b-2 border-dashed border-gray-800 mb-12">
-            <h1 class="text-3xl sm:text-5xl font-extrabold mb-4">
-                <span class="text-neon-yellow">MAHIR DAIYAN SAFWAAN</span>
-            </h1>
-            <h2 class="text-xl sm:text-3xl font-light mb-6">
-                &gt; <span id="typing-text" class="neon-text-cyan"></span><span class="inline-block w-2 h-6 sm:h-8 bg-neon-cyan animate-pulse"></span>
-            </h2>
-
-            <div class="max-w-4xl text-lg sm:text-xl text-gray-300">
-                <p class="mb-6">
-                    An enthusiastic programmer with extensive experience in <b>JavaScript, C, and C++</b>, focused on solving real-world challenges through technology.
-                    With over <b>1.5+ years of experience</b> in cross-platform app development (Android/iOS), I thrive on bridging software and hardware systems.
-                </p>
-                <p>
-                    My passion extends into <b>Aerospace and Rocketry</b>, where I specialize in Avionics Guidance Navigation Control (A&GNC), embedded systems, and model rocketry research.
-                </p>
-            </div>
-            <div class="mt-8 flex flex-wrap gap-4 text-sm sm:text-base">
-                <a href="mailto:msafwaan30@gmail.com" class="px-5 py-2 rounded-lg bg-action-btn text-dark-bg font-bold transition hover:opacity-80">
-                    <span class="glitch-text">CONTACT &gt;</span>
-                </a>
-                <a href="https://www.linkedin.com/in/safwaan30/" target="_blank" class="px-5 py-2 rounded-lg border-2 border-neon-cyan text-neon-cyan font-bold transition hover:bg-neon-cyan hover:text-dark-bg">
-                    LINKEDIN
-                </a>
-            </div>
-        </section>
-
-        <!-- SKILLS SECTION -->
-        <section id="skills" class="my-12">
-            <h3 class="text-3xl font-bold mb-8 neon-text-cyan border-b-2 border-neon-yellow pb-2">01. { SKILLS_MATRIX }</h3>
-
-            <!-- Grid is responsive: 1 col on mobile, 2 on medium, 3 on large -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Languages -->
-                <div class="section-box rounded-xl">
-                    <h4 class="text-xl font-bold mb-3 text-neon-yellow">LANGUAGES [DECODE]</h4>
-                    <ul class="space-y-2 text-gray-300 list-disc list-inside ml-2">
-                        <li>JavaScript (Primary)</li>
-                        <li>C, C++ (Embedded & Systems)</li>
-                        <li>Python (Scripting & Data)</li>
-                    </ul>
-                </div>
-
-                <!-- Core Tech (Changed color references from magenta to cyan/yellow palette) -->
-                <div class="section-box rounded-xl">
-                    <h4 class="text-xl font-bold mb-3 text-neon-cyan">CORE TECHNOLOGIES [BUILD]</h4>
-                    <div class="flex flex-wrap gap-2 text-xs sm:text-sm">
-                        <span class="px-3 py-1 bg-neon-cyan text-dark-bg rounded-full">React</span>
-                        <span class="px-3 py-1 bg-neon-cyan text-dark-bg rounded-full">React Native</span>
-                        <span class="px-3 py-1 bg-neon-cyan text-dark-bg rounded-full">Firebase / Node.js</span>
-                        <span class="px-3 py-1 bg-neon-cyan text-dark-bg rounded-full">NextJS</span>
-                        <span class="px-3 py-1 bg-neon-cyan text-dark-bg rounded-full">Embedded Systems (STM32/Arduino)</span>
-                    </div>
-                </div>
-
-                <!-- Tools & Libraries (Changed color references from magenta to cyan/yellow palette) -->
-                <div class="section-box rounded-xl">
-                    <h4 class="text-xl font-bold mb-3 text-neon-yellow">TOOLS & LIBRARIES [ANALYZE]</h4>
-                    <div class="flex flex-wrap gap-2 text-xs sm:text-sm">
-                        <span class="px-3 py-1 bg-neon-yellow text-dark-bg rounded-full">OPENMCT</span>
-                        <span class="px-3 py-1 bg-neon-yellow text-dark-bg rounded-full">KiCad / Altium</span>
-                        <span class="px-3 py-1 bg-neon-yellow text-dark-bg rounded-full">Numpy/SciPy/Matplotlib</span>
-                        <span class="px-3 py-1 bg-neon-yellow text-dark-bg rounded-full">D3.JS / Chart JS</span>
-                        <span class="px-3 py-1 bg-neon-yellow text-dark-bg rounded-full">Reverse Engineering</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- EXPERIENCE SECTION -->
-        <section id="experience" class="my-12">
-            <h3 class="text-3xl font-bold mb-8 neon-text-cyan border-b-2 border-neon-yellow pb-2">02. { EXECUTION_LOGS }</h3>
-
-            <div class="space-y-8">
-                <!-- AERD -->
-                <div class="section-box rounded-xl border-l-4 border-neon-cyan">
-                    <div class="flex justify-between flex-col sm:flex-row">
-                        <h4 class="text-xl font-bold text-neon-cyan">Amateur Experimental Rocketry Bangladesh (AERD)</h4>
-                        <span class="text-sm text-gray-500 italic">Aug 2024 - Present</span>
-                    </div>
-                    <p class="text-neon-yellow font-semibold mb-3">Avionics, Guidance, Navigation and Control (A&GNC)</p>
-                    <ul class="space-y-2 text-gray-300 list-disc list-inside ml-4">
-                        <li>Developed a <b>Ground Controlled System (GCS)</b> for real-time data transmission and servo control based on Cartesian coordinates and Euler's angle.</li>
-                        <li>Maintained NASA's <b>OPEN MCT</b> for mission-critical telemetry data visualization.</li>
-                        <li>Implemented flight control software using <b>Arduino</b> and <b>MQTT</b> protocol for real-time data ingestion.</li>
-                        <li>Gained expertise in <b>nozzle theory</b>, solid/liquid propellants, and electric propulsion.</li>
-                    </ul>
-                </div>
-
-                <!-- Dhumketu -->
-                <div class="section-box rounded-xl border-l-4 border-neon-yellow"> <!-- Changed border color -->
-                    <div class="flex justify-between flex-col sm:flex-row">
-                        <h4 class="text-xl font-bold text-neon-yellow">Dhumketu Exploration Company Limited</h4> <!-- Changed text color -->
-                        <span class="text-sm text-gray-500 italic">Apr 2024 - Oct 2024</span>
-                    </div>
-                    <p class="text-neon-cyan font-semibold mb-3">Embedded Systems and Avionics System Intern</p>
-                    <ul class="space-y-2 text-gray-300 list-disc list-inside ml-4">
-                        <li>Designed a custom <b>2-layer STM32 board</b> using <b>Altium Designer</b>.</li>
-                        <li>Applied control theory algorithms (<b>PID, Kalman Filter, Particle Filter</b>) to accurately process sensor values.</li>
-                    </ul>
-                </div>
-
-                <!-- CIOL -->
-                <div class="section-box rounded-xl border-l-4 border-neon-cyan">
-                    <div class="flex justify-between flex-col sm:flex-row">
-                        <h4 class="text-xl font-bold text-neon-cyan">Computational Intelligence and Operations Laboratory (CIOL)</h4>
-                        <span class="text-sm text-gray-500 italic">Oct 2024 - Jan 2025</span>
-                    </div>
-                    <p class="text-neon-yellow font-semibold mb-3">Research Student</p>
-                    <ul class="space-y-2 text-gray-300 list-disc list-inside ml-4">
-                        <li>Conducted a literature review on the impact of <b>Large Language Models (LLMs)</b> on human creativity.</li>
-                        <li>Engaged in learning <b>AI and ML</b> fundamentals, focusing on <b>Python</b> and <b>Data Preprocessing</b>.</li>
-                    </ul>
-                </div>
-
-            </div>
-        </section>
-
-        <!-- PROJECTS SECTION -->
-        <section id="projects" class="my-12">
-            <h3 class="text-3xl font-bold mb-8 neon-text-cyan border-b-2 border-neon-yellow pb-2">03. { PROJECT_ARTIFACTS }</h3>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Project 1: Until The EU -->
-                <div class="section-box rounded-xl border-t-4 border-neon-cyan hover:border-neon-yellow">
-                    <h4 class="text-xl font-bold mb-2 text-neon-cyan">Until The EU (e-ICON Champion)</h4>
-                    <p class="text-sm text-gray-500 mb-3">Mobile Development (Android/iOS)</p>
-                    <p class="text-gray-400">
-                        A cross-platform mobile app that measures <b>student stress levels</b> and provides a personalized track for managing depression.
-                    </p>
-                    <div class="mt-4 text-xs font-semibold">
-                        <span class="px-2 py-1 bg-neon-cyan text-dark-bg rounded-full mr-1">React Native</span>
-                        <span class="px-2 py-1 bg-neon-cyan text-dark-bg rounded-full">World Champion</span>
-                    </div>
-                </div>
-
-                <!-- Project 2: Alibi -->
-                <div class="section-box rounded-xl border-t-4 border-neon-yellow hover:border-neon-cyan"> <!-- Changed border color -->
-                    <h4 class="text-xl font-bold mb-2 text-neon-yellow">Alibi</h4> <!-- Changed text color -->
-                    <p class="text-sm text-gray-500 mb-3">Web Application</p>
-                    <p class="text-gray-400">
-                        A fully functional web platform for university students to keep track of classes, featuring custom <b>routine, teacher, and course management</b> using a full-stack architecture.
-                    </p>
-                    <div class="mt-4 text-xs font-semibold">
-                        <span class="px-2 py-1 bg-neon-yellow text-dark-bg rounded-full mr-1">React</span>
-                        <span class="px-2 py-1 bg-neon-yellow text-dark-bg rounded-full">Firebase</span>
-                    </div>
-                </div>
-
-                <!-- Project 3: Bare Metal Pomodoro -->
-                <div class="section-box rounded-xl border-t-4 border-neon-cyan hover:border-neon-yellow">
-                    <h4 class="text-xl font-bold mb-2 text-neon-cyan">Bare Metal Pomodoro Timer</h4>
-                    <p class="text-sm text-gray-500 mb-3">Embedded Systems</p>
-                    <p class="text-gray-400">
-                        Development of a fully functional Pomodoro timer using the <b>Atmega328P</b> microcontroller, coded entirely at the bare metal level for maximum efficiency.
-                    </p>
-                    <div class="mt-4 text-xs font-semibold">
-                        <span class="px-2 py-1 bg-neon-cyan text-dark-bg rounded-full mr-1">Atmega328P</span>
-                        <span class="px-2 py-1 bg-neon-cyan text-dark-bg rounded-full">C/C++</span>
-                    </div>
-                </div>
-
-                <!-- Project 4: SHUNBO Discord Bot -->
-                <div class="section-box rounded-xl border-t-4 border-neon-yellow hover:border-neon-cyan">
-                    <h4 class="text-xl font-bold mb-2 text-neon-yellow">SHUNBO (Discord Bot)</h4>
-                    <p class="text-sm text-gray-500 mb-3">Automation/Backend</p>
-                    <p class="text-gray-400">
-                        A Discord bot coded with <b>JavaScript</b> and running on a local server, designed to download audio from YouTube and deliver the MP3 format directly to the user's DM.
-                    </p>
-                    <div class="mt-4 text-xs font-semibold">
-                        <span class="px-2 py-1 bg-neon-yellow text-dark-bg rounded-full mr-1">DiscordJS</span>
-                        <span class="px-2 py-1 bg-neon-yellow text-dark-bg rounded-full">Node.js</span>
-                    </div>
-                </div>
-                
-                <!-- Project 5: Monthly Payment Manager -->
-                <div class="section-box rounded-xl border-t-4 border-neon-cyan hover:border-neon-yellow">
-                    <h4 class="text-xl font-bold mb-2 text-neon-cyan">Monthly Payment Manager</h4>
-                    <p class="text-sm text-gray-500 mb-3">Automation</p>
-                    <p class="text-gray-400">
-                        A **Python Selenium Automation** tool used for automating every month's payment by interacting with the bKash payment gateway.
-                    </p>
-                    <div class="mt-4 text-xs font-semibold">
-                        <span class="px-2 py-1 bg-neon-cyan text-dark-bg rounded-full mr-1">Python</span>
-                        <span class="px-2 py-1 bg-neon-cyan text-dark-bg rounded-full">Selenium</span>
-                    </div>
-                </div>
-                
-                <!-- Project 6: Section Distribution System -->
-                <div class="section-box rounded-xl border-t-4 border-neon-yellow hover:border-neon-cyan">
-                    <h4 class="text-xl font-bold mb-2 text-neon-yellow">Section Distribution System</h4>
-                    <p class="text-sm text-gray-500 mb-3">Data Processing/Automation</p>
-                    <p class="text-gray-400">
-                        Automated section distribution by reading data from a <b>PDF</b>, processing the information, and creating individual <b>Excel sheets</b> by applying specific filters.
-                    </p>
-                    <div class="mt-4 text-xs font-semibold">
-                        <span class="px-2 py-1 bg-neon-yellow text-dark-bg rounded-full mr-1">Python</span>
-                        <span class="px-2 py-1 bg-neon-yellow text-dark-bg rounded-full">Data Processing</span>
-                    </div>
-                </div>
-
-            </div>
-        </section>
-    </main>
-
-    <!-- Footer -->
-    <footer class="mt-12 p-6 text-center border-t border-gray-900 text-sm text-gray-500">
-        <p>RECODE THE WORLD // &copy; 2025 MAHIR DAIYAN SAFWAAN // SYSTEM V.1.2</p>
-    </footer>
-
-    <!-- JavaScript for Effects and Cursor -->
-    <script>
+    <!-- JavaScript for Effects, Cursor, and 3D Animation --><script>
         // Hamburger Menu Logic
         const hamburgerBtn = document.getElementById('hamburger-btn');
         const mobileMenu = document.getElementById('mobile-menu');
@@ -461,7 +372,6 @@
         function toggleMenu() {
             hamburgerBtn.classList.toggle('open');
             mobileMenu.classList.toggle('open');
-            // Prevent scrolling when mobile menu is open
             document.body.style.overflow = mobileMenu.classList.contains('open') ? 'hidden' : 'auto';
         }
 
@@ -471,7 +381,6 @@
             document.body.style.overflow = 'auto';
         }
 
-        // Attach event listener to the hamburger button
         hamburgerBtn.addEventListener('click', toggleMenu);
         
         // --- Custom Cursor and Typing Effects ---
@@ -480,13 +389,12 @@
             const cursorDot = document.getElementById('cursor-dot');
             const cursorOutline = document.getElementById('cursor-outline');
             const interactiveElements = 'a, button, .section-box, input, textarea';
-
-            // --- 1. Typing Effect (same as before) ---
+            
+            // --- 1. Typing Effect ---
             const phrases = [
                 "Avionics & GNC Engineer",
                 "Cross-Platform Developer",
-                "Embedded Systems Enthusiast",
-                "Decode the Matrix, Recode the World"
+                "Embedded Systems Enthusiast"
             ];
             let phraseIndex = 0;
             let charIndex = 0;
@@ -495,7 +403,6 @@
 
             function typeWriter() {
                 const currentPhrase = phrases[phraseIndex];
-
                 if (isDeleting) {
                     typingTextElement.textContent = currentPhrase.substring(0, charIndex - 1);
                     charIndex--;
@@ -510,35 +417,27 @@
                         typingSpeed = 2000;
                     }
                 }
-
                 if (charIndex === 0 && isDeleting) {
                     isDeleting = false;
                     phraseIndex = (phraseIndex + 1) % phrases.length;
                     typingSpeed = 300;
                 }
-
                 if (Math.random() < 0.1) {
                     typingTextElement.classList.add('glitch-text');
                 } else {
                     typingTextElement.classList.remove('glitch-text');
                 }
-
                 setTimeout(typeWriter, typingSpeed);
             }
-
             typeWriter();
             
             // --- 2. Custom Cursor Effect ---
-            
-            // Move cursor dot with the mouse (faster transition)
             window.addEventListener('mousemove', (e) => {
                 cursorDot.style.left = e.clientX + 'px';
                 cursorDot.style.top = e.clientY + 'px';
-                // Cursor outline follows slower for a trailing effect
                 cursorOutline.style.transform = `translate(${e.clientX}px, ${e.clientY}px) translate(-50%, -50%)`;
             });
             
-            // Interaction logic (enlarging cursor on hover)
             document.querySelectorAll(interactiveElements).forEach(el => {
                 el.addEventListener('mouseenter', () => {
                     cursorDot.style.transform = 'translate(-50%, -50%) scale(2.5)';
@@ -553,10 +452,132 @@
                     cursorOutline.style.opacity = '1';
                 });
             });
+
+            // --- 3. Directional 3D Content Tilt Effect (New Interaction) ---
+            const sectionBoxes = document.querySelectorAll('.section-box');
+            
+            function handleTilt(e) {
+                const box = e.currentTarget;
+                const rect = box.getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+
+                // Normalize delta from -1 to 1 based on mouse position
+                const deltaX = (e.clientX - centerX) / (rect.width / 2); 
+                const deltaY = (e.clientY - centerY) / (rect.height / 2); 
+
+                // Max 8 degrees rotation for a subtle depth effect
+                const maxRotation = 8;
+                const rotateY = deltaX * maxRotation; 
+                const rotateX = -deltaY * maxRotation; // X is inverted for natural tilt
+
+                box.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
+                // Enhanced shadow and border glow on hover
+                box.style.boxShadow = `0 15px 30px rgba(0, 0, 0, 0.7), 0 0 10px var(--neon-magenta)`; 
+                box.style.borderColor = 'var(--neon-magenta)';
+            }
+
+            function resetTilt(e) {
+                const box = e.currentTarget;
+                // Reset transform to flat (0deg rotation, 1 scale)
+                box.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)'; 
+                // Reset original shadow/border color
+                box.style.boxShadow = 'none'; 
+                box.style.borderColor = 'var(--mid-dark)';
+            }
+            
+            sectionBoxes.forEach(box => {
+                // Ensure a smooth transition when applying tilt
+                box.style.transition = 'transform 0.2s ease-out, box-shadow 0.2s ease-out, border-color 0.2s ease-out'; 
+                box.addEventListener('mousemove', handleTilt);
+                box.addEventListener('mouseleave', resetTilt);
+            });
+
+
+            // --- 4. Three.js Dynamic Background ---
+            const canvas = document.getElementById('three-canvas');
+            let scene, camera, renderer, grid;
+            let mouseX = 0, mouseY = 0;
+            let windowHalfX = window.innerWidth / 2;
+            let windowHalfY = window.innerHeight / 2;
+
+            function initThree() {
+                scene = new THREE.Scene();
+                camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 5000);
+                camera.position.z = 1000;
+                
+                renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                renderer.setPixelRatio(window.devicePixelRatio);
+
+                const particles = 10000;
+                const geometry = new THREE.BufferGeometry();
+                const positions = [];
+                const colors = [];
+                // Fetch all three neon colors for the 3D grid
+                const colorCyan = new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue('--neon-cyan'));
+                const colorYellow = new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue('--neon-yellow'));
+                const colorMagenta = new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue('--neon-magenta'));
+                const colorArray = [colorCyan, colorYellow, colorMagenta];
+                
+                for (let i = 0; i < particles; i++) {
+                    const x = (Math.random() * 2000) - 1000;
+                    const y = (Math.random() * 2000) - 1000;
+                    const z = (Math.random() * 2000) - 1000;
+                    positions.push(x, y, z);
+                    
+                    // Cycle through Cyan, Yellow, and Magenta
+                    const colorIndex = i % colorArray.length;
+                    const color = colorArray[colorIndex];
+                    colors.push(color.r, color.g, color.b);
+                }
+
+                geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+                geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+
+                const material = new THREE.PointsMaterial({
+                    size: 3,
+                    vertexColors: true,
+                    blending: THREE.AdditiveBlending,
+                    transparent: true,
+                    opacity: 0.65 
+                });
+
+                grid = new THREE.Points(geometry, material);
+                scene.add(grid);
+
+                window.addEventListener('resize', onWindowResize);
+                document.addEventListener('mousemove', onDocumentMouseMove);
+            }
+
+            function onWindowResize() {
+                windowHalfX = window.innerWidth / 2;
+                windowHalfY = window.innerHeight / 2;
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            }
+
+            function onDocumentMouseMove(event) {
+                mouseX = (event.clientX - windowHalfX) * 0.1;
+                mouseY = (event.clientY - windowHalfY) * 0.1;
+            }
+
+            function animateThree() {
+                requestAnimationFrame(animateThree);
+                grid.rotation.y += 0.0005;
+                grid.rotation.x += 0.0002;
+                camera.position.x += (mouseX - camera.position.x) * 0.05;
+                camera.position.y += (-mouseY - camera.position.y) * 0.05;
+                camera.lookAt(scene.position);
+                renderer.render(scene, camera);
+            }
+
+            if (typeof THREE !== 'undefined') {
+                initThree();
+                animateThree();
+            }
         });
     </script>
 </body>
 </html>
-
-
-
